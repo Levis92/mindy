@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components/native';
-import {CircleButton} from '../components/Buttons';
+import {faUndoAlt} from '@fortawesome/free-solid-svg-icons';
+import {CircleButton, LabeledIconButton} from '../components/Buttons';
 import {Center, Space} from '../components/Layout';
 import {Heading} from '../components/Text';
 import {useTimer} from '../hooks/timer';
@@ -35,7 +36,7 @@ export const TimerView = () => {
         <Heading type="small">Background sound</Heading>
         <Heading type="big">Pouring rain</Heading>
         <Space spacing="unit600" />
-        <Digits onPress={() => setEditTime(true)}>
+        <Digits onPress={() => !running && setEditTime(true)}>
           {formatTimer(hours, minutes, seconds)}
         </Digits>
         <Space spacing="unit600" />
@@ -45,8 +46,12 @@ export const TimerView = () => {
             onPress={toggleTimer}
           />
         )}
-        <Space spacing="unit400" />
-        <CircleButton text="Reset" onPress={resetTimer} />
+        <Space spacing="unit600" />
+        <LabeledIconButton
+          icon={faUndoAlt}
+          label="Reset"
+          onPress={resetTimer}
+        />
       </Center>
       {editTime && (
         <EditTimer

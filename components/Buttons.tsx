@@ -1,5 +1,9 @@
 import React, {FC} from 'react';
 import styled from 'styled-components/native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {IconDefinition} from '@fortawesome/free-solid-svg-icons';
+import {Center, Space} from './Layout';
 
 const CircleButtonBackground = styled.TouchableOpacity`
   background-color: white;
@@ -24,4 +28,29 @@ export const CircleButton: FC<CircleButtonProps> = ({text, onPress}) => (
   <CircleButtonBackground onPress={onPress}>
     <ButtonText>{text.toLocaleUpperCase()}</ButtonText>
   </CircleButtonBackground>
+);
+
+const LabelText = styled.Text`
+  color: white;
+  font-size: 20px;
+`;
+
+interface LabeledIconButtonProps {
+  icon: IconDefinition;
+  label: string;
+  onPress(): void;
+}
+
+export const LabeledIconButton: FC<LabeledIconButtonProps> = ({
+  icon,
+  label,
+  onPress,
+}) => (
+  <TouchableOpacity onPress={onPress}>
+    <Center>
+      <FontAwesomeIcon icon={icon} color="white" size={32} />
+      <Space />
+      <LabelText>{label}</LabelText>
+    </Center>
+  </TouchableOpacity>
 );
