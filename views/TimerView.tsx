@@ -6,6 +6,7 @@ import {Center, Space} from '../components/Layout';
 import {Heading} from '../components/Text';
 import {useTimer} from '../hooks/timer';
 import {EditTimer} from '../components/EditTimer';
+import {useBackgroundSound} from '../hooks/background-sound';
 
 const Digits = styled.Text`
   font-size: 120px;
@@ -28,13 +29,35 @@ export const TimerView = () => {
     {running, totalTime, secondsLeft, hours, minutes, seconds},
     {setTimer, toggleTimer, resetTimer},
   ] = useTimer(1800);
+  const [
+    {soundName, isPlaying, availableSounds},
+    {selectSound, play, pause},
+  ] = useBackgroundSound();
   const [editTime, setEditTime] = useState(false);
+
+  if (!soundName) {
+    selectSound('rainforest');
+  }
+
+  if (!running && isPlaying) {
+    pause();
+  }
+
+  const startTimer = () => {
+    toggleTimer();
+    play();
+  };
+
+  const pauseTimer = () => {
+    toggleTimer();
+    pause();
+  };
 
   return (
     <ViewContainer>
       <Center>
         <Heading type="small">Background sound</Heading>
-        <Heading type="big">Pouring rain</Heading>
+        <Heading type="big">{availableSounds[0].name}</Heading>
         <Space spacing="unit600" />
         <Digits onPress={() => !running && setEditTime(true)}>
           {formatTimer(hours, minutes, seconds)}
@@ -43,7 +66,7 @@ export const TimerView = () => {
         {secondsLeft !== 0 && (
           <CircleButton
             text={running ? 'Pause' : 'Start'}
-            onPress={toggleTimer}
+            onPress={running ? pauseTimer : startTimer}
           />
         )}
         <Space spacing="unit600" />
