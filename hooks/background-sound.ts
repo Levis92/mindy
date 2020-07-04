@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 
 import Sound from 'react-native-sound';
 // Enable playback in silence mode
-Sound.setCategory('Playback');
+Sound.setCategory('Playback', true);
 
 function createSound(backgroundSound: BackgroundSound) {
   function callback(error: any) {
@@ -11,11 +11,10 @@ function createSound(backgroundSound: BackgroundSound) {
       return;
     }
   }
-  if (backgroundSound.isRequire) {
-    return new Sound(backgroundSound.url, callback);
-  } else {
-    return new Sound(backgroundSound.url, Sound.MAIN_BUNDLE, callback);
-  }
+  const sound = backgroundSound.isRequire
+    ? new Sound(backgroundSound.url, callback)
+    : new Sound(backgroundSound.url, Sound.MAIN_BUNDLE, callback);
+  return sound;
 }
 
 interface BackgroundSound {
@@ -79,6 +78,7 @@ export function useBackgroundSound(): [
 
   const play = () => {
     if (sound) {
+      sound.setNumberOfLoops(-1);
       sound.play((success: boolean) => {
         if (success) {
           console.log('successfully finished playing');
@@ -102,11 +102,16 @@ export function useBackgroundSound(): [
   };
 
   useEffect(() => {
-    return () => sound?.stop();
+    return () => {
+      if (sound) {
+        sound.stop();
+        sound.release();
+      }
+    };
   }, [sound]);
 
   return [
-    {soundName, isPlaying: sound?.isPlaying() === true, availableSounds},
+    {soundName, isPlaying: !!sound?.isPlaying(), availableSounds},
     {selectSound, play, pause, stop},
   ];
 }
